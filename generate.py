@@ -101,15 +101,9 @@ class CrosswordCreator():
         """
         # Make consistent with unary constraints
         for variable in self.domains:
-            print(variable.length)
-            print(self.domains[variable])
             for word in self.domains[variable].copy():
                 if len(word) != variable.length:
                     self.domains[variable].remove(word)
-            print(self.domains[variable])
-
-        # self.domains[v].remove(x)
-        raise NotImplementedError
 
     def revise(self, x, y):
         """
@@ -131,7 +125,8 @@ class CrosswordCreator():
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        raise NotImplementedError
+        print(arcs)
+        # raise NotImplementedError
 
     def assignment_complete(self, assignment):
         """
