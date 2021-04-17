@@ -128,20 +128,23 @@ class CrosswordCreator():
             return revised
         
         i,j = self.crossword.overlaps[(x,y)]
+        print(i,j)
         
+        print( self.domains[x].copy())
         for X in self.domains[x].copy():
             # if no value in Y that satisfies binary constraint
             # checking overlap
             valid_option_found = False
 
             for Y in self.domains[y]:
-                if X[i] == Y[j]:
+                if X[i] == Y[j] and X != Y:
                     valid_option_found = True
+                    print(Y)
             
             if not valid_option_found:
                 self.domains[x].remove(X)
                 revised = True
-
+        print(self.domains[x])
         return revised
 
     def ac3(self, arcs=None):
