@@ -114,7 +114,35 @@ class CrosswordCreator():
         Return True if a revision was made to the domain of `x`; return
         False if no revision was made.
         """
-        raise NotImplementedError
+
+        # 	Revise(csp, X, Y):
+		# revised = false
+		# for x in X's domain:
+		# 	
+		# 		
+		# return revised
+
+        revised = False
+        
+        if self.crossword.overlaps[(x,y)] is None:
+            return revised
+        
+        i,j = self.crossword.overlaps[(x,y)]
+        
+        for X in self.domains[x].copy():
+            # if no value in Y that satisfies binary constraint
+            # checking overlap
+            valid_option_found = False
+
+            for Y in self.domains[y]:
+                if X[i] == Y[j]:
+                    valid_option_found = True
+            
+            if not valid_option_found:
+                self.domains[x].remove(X)
+                revised = True
+
+        return revised
 
     def ac3(self, arcs=None):
         """
@@ -125,6 +153,39 @@ class CrosswordCreator():
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
+        if arcs == None:
+            arcs = []
+            for pair in self.crossword.overlaps.keys():
+                if self.crossword.overlaps[pair] is not None:
+                    arcs.append(pair)
+
+        while len(arcs) > 0:
+            arc = arcs.pop(0)
+            x, y = arc
+            # import pdb; pdb.set_trace()
+            if self.revise(x, y):
+                if len(self.domains[x]) == 0: # if size of X.domain == 0
+                    return False
+                for z in (self.crossword.neighbors(x) - {y}):
+                    arcs.append((z,x))
+        
+        return True
+
+
+
+
+#            AC3(csp):
+	# queue = all arcs in csp
+	# 	while queue is not empty:
+	# 		(X,Y) = dequeue(queue)
+	# 		if revise(csp, X, Y):
+	# 			if size of X.domain == 0
+	# 				return false
+	# 			for each Z in X.neighbours - {Y}:
+	# 				enqueue(queue, (Z, X))
+	# 	return True
+
+
         print(arcs)
         # raise NotImplementedError
 
