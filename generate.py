@@ -116,11 +116,11 @@ class CrosswordCreator():
         """
 
         # 	Revise(csp, X, Y):
-		# revised = false
-		# for x in X's domain:
-		# 	
-		# 		
-		# return revised
+        # revised = false
+        # for x in X's domain:
+        # 	
+        # 		
+        # return revised
 
         revised = False
         
@@ -178,15 +178,15 @@ class CrosswordCreator():
 
 
 #            AC3(csp):
-	# queue = all arcs in csp
-	# 	while queue is not empty:
-	# 		(X,Y) = dequeue(queue)
-	# 		if revise(csp, X, Y):
-	# 			if size of X.domain == 0
-	# 				return false
-	# 			for each Z in X.neighbours - {Y}:
-	# 				enqueue(queue, (Z, X))
-	# 	return True
+    # queue = all arcs in csp
+    # 	while queue is not empty:
+    # 		(X,Y) = dequeue(queue)
+    # 		if revise(csp, X, Y):
+    # 			if size of X.domain == 0
+    # 				return false
+    # 			for each Z in X.neighbours - {Y}:
+    # 				enqueue(queue, (Z, X))
+    # 	return True
 
 
         print(arcs)
@@ -234,7 +234,28 @@ class CrosswordCreator():
 
         If no assignment is possible, return None.
         """
-        raise NotImplementedError
+
+        if self.assignment_complete(assignment): 
+            return assignment
+
+        variable = self.select_unassigned_variable(assigmnent)
+
+        for word in self.domains[variable]:
+
+
+            # Try word
+            assignment[variable] = word
+
+            if self.consistent(assignment):
+                result = self.backtrack(assignment)
+
+                if result != "failure":
+                    return result
+
+            # Remove choice from assignment
+            assignment.pop("variable")
+
+        return "failure"
 
 
 def main():
