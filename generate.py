@@ -287,7 +287,7 @@ class CrosswordCreator():
                     return result
 
             # Remove choice from assignment
-            assignment.pop("variable")
+            assignment.pop(variable)
 
         return "failure"
 
