@@ -234,7 +234,22 @@ class CrosswordCreator():
         unassigned.sort(key= lambda x: len(self.domains[x]))
         print(unassigned)
 
+        min_domain_length = len(self.domains[unassigned[0]])
+        tied = []
 
+        if len(self.domains[unassigned[1]]) != min_domain_length:
+            return unassigned[0]
+        else:
+            for variable in unassigned:
+                if len(self.domains[variable]) == min_domain_length:
+                    print(len(self.crossword.neighbors(variable)))
+                    tied.append(variable)
+
+        tied.sort(key=lambda x: len(self.crossword.neighbors(x)))
+
+        print(tied)
+
+        return tied[0]
         
         raise NotImplementedError
 
