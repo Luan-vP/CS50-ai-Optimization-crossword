@@ -197,7 +197,7 @@ class CrosswordCreator():
         Return True if `assignment` is complete (i.e., assigns a value to each
         crossword variable); return False otherwise.
         """
-        raise NotImplementedError
+        return len(assignment) == len(self.crossword.variables)
 
     def consistent(self, assignment):
         """
@@ -223,6 +223,19 @@ class CrosswordCreator():
         degree. If there is a tie, any of the tied variables are acceptable
         return values.
         """
+        unassigned = []
+        for variable in self.crossword.variables:
+            print(variable)
+            print(len(self.domains[variable]))
+            if variable not in assignment.keys():
+                unassigned.append(variable)
+
+        print(unassigned)
+        unassigned.sort(key= lambda x: len(self.domains[x]))
+        print(unassigned)
+
+
+        
         raise NotImplementedError
 
     def backtrack(self, assignment):
@@ -238,7 +251,7 @@ class CrosswordCreator():
         if self.assignment_complete(assignment): 
             return assignment
 
-        variable = self.select_unassigned_variable(assigmnent)
+        variable = self.select_unassigned_variable(assignment)
 
         for word in self.domains[variable]:
 
