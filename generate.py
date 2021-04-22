@@ -115,22 +115,13 @@ class CrosswordCreator():
         False if no revision was made.
         """
 
-        # 	Revise(csp, X, Y):
-        # revised = false
-        # for x in X's domain:
-        # 	
-        # 		
-        # return revised
-
         revised = False
         
         if self.crossword.overlaps[(x,y)] is None:
             return revised
         
         i,j = self.crossword.overlaps[(x,y)]
-        print(i,j)
         
-        print( self.domains[x].copy())
         for X in self.domains[x].copy():
             # if no value in Y that satisfies binary constraint
             # checking overlap
@@ -139,12 +130,11 @@ class CrosswordCreator():
             for Y in self.domains[y]:
                 if X[i] == Y[j] and X != Y:
                     valid_option_found = True
-                    print(Y)
             
             if not valid_option_found:
                 self.domains[x].remove(X)
                 revised = True
-        print(self.domains[x])
+
         return revised
 
     def ac3(self, arcs=None):
@@ -174,24 +164,6 @@ class CrosswordCreator():
         
         return True
 
-
-
-
-#            AC3(csp):
-    # queue = all arcs in csp
-    # 	while queue is not empty:
-    # 		(X,Y) = dequeue(queue)
-    # 		if revise(csp, X, Y):
-    # 			if size of X.domain == 0
-    # 				return false
-    # 			for each Z in X.neighbours - {Y}:
-    # 				enqueue(queue, (Z, X))
-    # 	return True
-
-
-        print(arcs)
-        # raise NotImplementedError
-
     def assignment_complete(self, assignment):
         """
         Return True if `assignment` is complete (i.e., assigns a value to each
@@ -214,9 +186,7 @@ class CrosswordCreator():
                 overlap = self.crossword.overlaps[variable, neighbour]
                 if overlap is None or neighbour not in assignment:
                     continue
-                print("overlap")
-                print(overlap)
-                print(assignment[variable][overlap[0]], assignment[neighbour][overlap[1]])
+
                 if assignment[variable][overlap[0]] != assignment[neighbour][overlap[1]]:
                     return False
 
@@ -229,7 +199,33 @@ class CrosswordCreator():
         The first value in the list, for example, should be the one
         that rules out the fewest values among the neighbors of `var`.
         """
-        raise NotImplementedError
+        domain = self.domains[var]
+        removed_choices_dict = {}
+
+        for value in domain:
+            removed_choices = []
+            for neighbour in self.crossword.neighbors(var):
+                
+                # Only unassigned neighbours
+                if neighbour in assignment.keys():
+                    continue
+                
+                overlap = self.crossword.overlaps[var,neighbour]
+                if len(value) < overlap[0] + 1:
+                        continue
+                
+                for choice in self.domains[neighbour]:
+                    if choice == value:
+                        removed_choices.append(choice)
+                    elif value[overlap[0]] != choice[overlap[1]]:
+                        removed_choices.append(choice)
+
+            removed_choices_dict[value] = len(removed_choices)
+
+        sorted_domain = list(domain)
+        sorted_domain.sort(key= lambda x: removed_choices_dict[x])
+
+        return sorted_domain
 
     def select_unassigned_variable(self, assignment):
         """
@@ -310,6 +306,8 @@ def main():
     # Generate crossword
     crossword = Crossword(structure, words)
     creator = CrosswordCreator(crossword)
+    creator.enforce_node_consistency()
+    creator.order_domain_values(list(creator.crossword.variables)[0], {})
     assignment = creator.solve()
 
     # Print result
