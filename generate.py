@@ -204,7 +204,23 @@ class CrosswordCreator():
         Return True if `assignment` is consistent (i.e., words fit in crossword
         puzzle without conflicting characters); return False otherwise.
         """
-        raise NotImplementedError
+
+        for variable in assignment:
+            # Check Unary constraint
+            if len(assignment[variable]) != variable.length:
+                return False
+            
+            for neighbour in self.crossword.neighbors(variable):
+                overlap = self.crossword.overlaps[variable, neighbour]
+                if overlap is None or neighbour not in assignment:
+                    continue
+                print("overlap")
+                print(overlap)
+                print(assignment[variable][overlap[0]], assignment[neighbour][overlap[1]])
+                if assignment[variable][overlap[0]] != assignment[neighbour][overlap[1]]:
+                    return False
+
+        return True
 
     def order_domain_values(self, var, assignment):
         """
@@ -225,13 +241,15 @@ class CrosswordCreator():
         """
         unassigned = []
         for variable in self.crossword.variables:
-            print(variable)
-            print(len(self.domains[variable]))
             if variable not in assignment.keys():
                 unassigned.append(variable)
 
-        unassigned.sort(key= lambda x: len(self.domains[x]))
+        if len(unassigned) == 1:
+            return unassigned[0]
+        elif len(unassigned) == 0:
+            return None
 
+        unassigned.sort(key= lambda x: len(self.domains[x]))
         min_domain_length = len(self.domains[unassigned[0]])
         tied = []
 
